@@ -880,20 +880,24 @@ struct vxlan_encap_conf vxlan_encap_conf = {
 	.select_ipv4 = 1,
 	.select_vlan = 0,
 	.select_tos_ttl = 0,
-	.vni = "\x00\x00\x00",
+	.vni = {0x00, 0x00, 0x00},
 	.udp_src = 0,
 	.udp_dst = RTE_BE16(RTE_VXLAN_DEFAULT_PORT),
 	.ipv4_src = RTE_IPV4(127, 0, 0, 1),
 	.ipv4_dst = RTE_IPV4(255, 255, 255, 255),
-	.ipv6_src = "\x00\x00\x00\x00\x00\x00\x00\x00"
-		"\x00\x00\x00\x00\x00\x00\x00\x01",
-	.ipv6_dst = "\x00\x00\x00\x00\x00\x00\x00\x00"
-		"\x00\x00\x00\x00\x00\x00\x11\x11",
+	.ipv6_src = {
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
+	},
+	.ipv6_dst = {
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x11, 0x11,
+	},
 	.vlan_tci = 0,
 	.ip_tos = 0,
 	.ip_ttl = 255,
-	.eth_src = "\x00\x00\x00\x00\x00\x00",
-	.eth_dst = "\xff\xff\xff\xff\xff\xff",
+	.eth_src = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+	.eth_dst = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
 };
 
 /** Maximum number of items in struct rte_flow_action_vxlan_encap. */
@@ -916,16 +920,20 @@ struct action_vxlan_encap_data {
 struct nvgre_encap_conf nvgre_encap_conf = {
 	.select_ipv4 = 1,
 	.select_vlan = 0,
-	.tni = "\x00\x00\x00",
+	.tni = {0x00, 0x00, 0x00},
 	.ipv4_src = RTE_IPV4(127, 0, 0, 1),
 	.ipv4_dst = RTE_IPV4(255, 255, 255, 255),
-	.ipv6_src = "\x00\x00\x00\x00\x00\x00\x00\x00"
-		"\x00\x00\x00\x00\x00\x00\x00\x01",
-	.ipv6_dst = "\x00\x00\x00\x00\x00\x00\x00\x00"
-		"\x00\x00\x00\x00\x00\x00\x11\x11",
+	.ipv6_src = {
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
+	},
+	.ipv6_dst = {
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x11, 0x11,
+	},
 	.vlan_tci = 0,
-	.eth_src = "\x00\x00\x00\x00\x00\x00",
-	.eth_dst = "\xff\xff\xff\xff\xff\xff",
+	.eth_src = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+	.eth_dst = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
 };
 
 /** Maximum number of items in struct rte_flow_action_nvgre_encap. */

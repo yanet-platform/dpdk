@@ -900,8 +900,8 @@ struct rte_flow_item_eth {
 /** Default mask for RTE_FLOW_ITEM_TYPE_ETH. */
 #ifndef __cplusplus
 static const struct rte_flow_item_eth rte_flow_item_eth_mask = {
-	.hdr.dst_addr.addr_bytes = "\xff\xff\xff\xff\xff\xff",
-	.hdr.src_addr.addr_bytes = "\xff\xff\xff\xff\xff\xff",
+	.hdr.dst_addr.addr_bytes = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
+	.hdr.src_addr.addr_bytes = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
 	.hdr.ether_type = RTE_BE16(0x0000),
 };
 #endif
@@ -1002,12 +1002,15 @@ struct rte_flow_item_ipv6 {
 #ifndef __cplusplus
 static const struct rte_flow_item_ipv6 rte_flow_item_ipv6_mask = {
 	.hdr = {
-		.src_addr =
-			"\xff\xff\xff\xff\xff\xff\xff\xff"
-			"\xff\xff\xff\xff\xff\xff\xff\xff",
-		.dst_addr =
-			"\xff\xff\xff\xff\xff\xff\xff\xff"
-			"\xff\xff\xff\xff\xff\xff\xff\xff",
+		.src_addr = {
+			0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+			0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+		},
+		.dst_addr = {
+			0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+			0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+		},
+
 	},
 };
 #endif
@@ -1124,7 +1127,7 @@ struct rte_flow_item_vxlan {
 /** Default mask for RTE_FLOW_ITEM_TYPE_VXLAN. */
 #ifndef __cplusplus
 static const struct rte_flow_item_vxlan rte_flow_item_vxlan_mask = {
-	.hdr.vni = "\xff\xff\xff",
+	.hdr.vni = {0xff, 0xff, 0xff},
 };
 #endif
 
@@ -1177,7 +1180,7 @@ struct rte_flow_item_nvgre {
 /** Default mask for RTE_FLOW_ITEM_TYPE_NVGRE. */
 #ifndef __cplusplus
 static const struct rte_flow_item_nvgre rte_flow_item_nvgre_mask = {
-	.tni = "\xff\xff\xff",
+	.tni = {0xff, 0xff, 0xff},
 };
 #endif
 
@@ -1197,7 +1200,7 @@ struct rte_flow_item_mpls {
 /** Default mask for RTE_FLOW_ITEM_TYPE_MPLS. */
 #ifndef __cplusplus
 static const struct rte_flow_item_mpls rte_flow_item_mpls_mask = {
-	.label_tc_s = "\xff\xff\xf0",
+	.label_tc_s = {0xff, 0xff, 0xf0},
 };
 #endif
 
@@ -1341,7 +1344,7 @@ struct rte_flow_item_geneve {
 /** Default mask for RTE_FLOW_ITEM_TYPE_GENEVE. */
 #ifndef __cplusplus
 static const struct rte_flow_item_geneve rte_flow_item_geneve_mask = {
-	.vni = "\xff\xff\xff",
+	.vni = {0xff, 0xff, 0xff},
 };
 #endif
 
@@ -1370,7 +1373,7 @@ struct rte_flow_item_vxlan_gpe {
 /** Default mask for RTE_FLOW_ITEM_TYPE_VXLAN_GPE. */
 #ifndef __cplusplus
 static const struct rte_flow_item_vxlan_gpe rte_flow_item_vxlan_gpe_mask = {
-	.hdr.vni = "\xff\xff\xff",
+	.hdr.vni = {0xff, 0xff, 0xff},
 };
 #endif
 
@@ -1404,9 +1407,9 @@ struct rte_flow_item_arp_eth_ipv4 {
 #ifndef __cplusplus
 static const struct rte_flow_item_arp_eth_ipv4
 rte_flow_item_arp_eth_ipv4_mask = {
-	.hdr.arp_data.arp_sha.addr_bytes = "\xff\xff\xff\xff\xff\xff",
+	.hdr.arp_data.arp_sha.addr_bytes = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
 	.hdr.arp_data.arp_sip = RTE_BE32(UINT32_MAX),
-	.hdr.arp_data.arp_tha.addr_bytes = "\xff\xff\xff\xff\xff\xff",
+	.hdr.arp_data.arp_tha.addr_bytes = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
 	.hdr.arp_data.arp_tip = RTE_BE32(UINT32_MAX),
 };
 #endif
@@ -1493,9 +1496,10 @@ struct rte_flow_item_icmp6_nd_ns {
 #ifndef __cplusplus
 static const
 struct rte_flow_item_icmp6_nd_ns rte_flow_item_icmp6_nd_ns_mask = {
-	.target_addr =
-		"\xff\xff\xff\xff\xff\xff\xff\xff"
-		"\xff\xff\xff\xff\xff\xff\xff\xff",
+	.target_addr = {
+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+	},
 };
 #endif
 
@@ -1520,9 +1524,10 @@ struct rte_flow_item_icmp6_nd_na {
 #ifndef __cplusplus
 static const
 struct rte_flow_item_icmp6_nd_na rte_flow_item_icmp6_nd_na_mask = {
-	.target_addr =
-		"\xff\xff\xff\xff\xff\xff\xff\xff"
-		"\xff\xff\xff\xff\xff\xff\xff\xff",
+	.target_addr = {
+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+	},
 };
 #endif
 
@@ -1571,7 +1576,7 @@ struct rte_flow_item_icmp6_nd_opt_sla_eth {
 #ifndef __cplusplus
 static const struct rte_flow_item_icmp6_nd_opt_sla_eth
 rte_flow_item_icmp6_nd_opt_sla_eth_mask = {
-	.sla.addr_bytes = "\xff\xff\xff\xff\xff\xff",
+	.sla.addr_bytes = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
 };
 #endif
 
@@ -1596,7 +1601,7 @@ struct rte_flow_item_icmp6_nd_opt_tla_eth {
 #ifndef __cplusplus
 static const struct rte_flow_item_icmp6_nd_opt_tla_eth
 rte_flow_item_icmp6_nd_opt_tla_eth_mask = {
-	.tla.addr_bytes = "\xff\xff\xff\xff\xff\xff",
+	.tla.addr_bytes = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
 };
 #endif
 
@@ -2059,7 +2064,7 @@ struct rte_flow_item_ib_bth {
 static const struct rte_flow_item_ib_bth rte_flow_item_ib_bth_mask = {
 	.hdr = {
 		.opcode = 0xff,
-		.dst_qp = "\xff\xff\xff",
+		.dst_qp = {0xff, 0xff, 0xff},
 	},
 };
 #endif

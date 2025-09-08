@@ -7655,12 +7655,14 @@ flow_dv_validate(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
 	};
 	const struct rte_flow_item_ipv6 nic_ipv6_mask = {
 		.hdr = {
-			.src_addr =
-			"\xff\xff\xff\xff\xff\xff\xff\xff"
-			"\xff\xff\xff\xff\xff\xff\xff\xff",
-			.dst_addr =
-			"\xff\xff\xff\xff\xff\xff\xff\xff"
-			"\xff\xff\xff\xff\xff\xff\xff\xff",
+			.src_addr = {
+				0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+				0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+			},
+			.dst_addr = {
+				0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+				0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+			},
 			.vtc_flow = RTE_BE32(0xffffffff),
 			.proto = 0xff,
 			.hop_limits = 0xff,
@@ -9168,8 +9170,8 @@ flow_dv_translate_item_eth(void *key, const struct rte_flow_item *item,
 	const struct rte_flow_item_eth *eth_m;
 	const struct rte_flow_item_eth *eth_v;
 	const struct rte_flow_item_eth nic_mask = {
-		.hdr.dst_addr.addr_bytes = "\xff\xff\xff\xff\xff\xff",
-		.hdr.src_addr.addr_bytes = "\xff\xff\xff\xff\xff\xff",
+		.hdr.dst_addr.addr_bytes = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
+		.hdr.src_addr.addr_bytes = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
 		.hdr.ether_type = RTE_BE16(0xffff),
 		.has_vlan = 0,
 	};
@@ -9426,12 +9428,14 @@ flow_dv_translate_item_ipv6(void *key, const struct rte_flow_item *item,
 	const struct rte_flow_item_ipv6 *ipv6_v;
 	const struct rte_flow_item_ipv6 nic_mask = {
 		.hdr = {
-			.src_addr =
-				"\xff\xff\xff\xff\xff\xff\xff\xff"
-				"\xff\xff\xff\xff\xff\xff\xff\xff",
-			.dst_addr =
-				"\xff\xff\xff\xff\xff\xff\xff\xff"
-				"\xff\xff\xff\xff\xff\xff\xff\xff",
+			.src_addr = {
+				0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+				0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+			},
+			.dst_addr = {
+				0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+				0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+			},
 			.vtc_flow = RTE_BE32(0xffffffff),
 			.proto = 0xff,
 			.hop_limits = 0xff,
@@ -9941,7 +9945,7 @@ flow_dv_translate_item_vxlan(struct rte_eth_dev *dev,
 	int i;
 	struct mlx5_priv *priv = dev->data->dev_private;
 	const struct rte_flow_item_vxlan nic_mask = {
-		.hdr.vni = "\xff\xff\xff",
+		.hdr.vni = {0xff, 0xff, 0xff},
 		.hdr.rsvd1 = 0xff,
 	};
 
