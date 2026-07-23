@@ -88,6 +88,7 @@ static int virtio_mac_addr_set(struct rte_eth_dev *dev,
 static int virtio_intr_disable(struct rte_eth_dev *dev);
 static int virtio_get_monitor_addr(void *rx_queue,
 				struct rte_power_monitor_cond *pmc);
+static int virtio_dev_tx_done_cleanup(void *txq, uint32_t free_cnt);
 
 static int virtio_dev_queue_stats_mapping_set(
 	struct rte_eth_dev *eth_dev,
@@ -636,6 +637,7 @@ static const struct eth_dev_ops virtio_eth_dev_ops = {
 	.rx_queue_intr_enable    = virtio_dev_rx_queue_intr_enable,
 	.rx_queue_intr_disable   = virtio_dev_rx_queue_intr_disable,
 	.tx_queue_setup          = virtio_dev_tx_queue_setup,
+	.tx_done_cleanup         = virtio_dev_tx_done_cleanup,
 	.rss_hash_update         = virtio_dev_rss_hash_update,
 	.rss_hash_conf_get       = virtio_dev_rss_hash_conf_get,
 	.reta_update             = virtio_dev_rss_reta_update,
@@ -2469,6 +2471,65 @@ static void virtio_dev_free_mbufs(struct rte_eth_dev *dev)
 	}
 
 	PMD_INIT_LOG(DEBUG, "%d mbufs freed", mbuf_num);
+}
+
+/*
+ * Free mbufs for completed Tx descriptors on a single queue without
+ * requiring a pending transmit burst.  The virtio driver reclaims used
+ * descriptors only inside rte_eth_tx_burst(); without this op the generic
+ * rte_eth_tx_done_cleanup() returns -ENOTSUP and completed mbufs stay
+ * pinned in the sw_ring at quiescence.
+ *
+ * free_cnt == 0 reclaims all completed descriptors; otherwise at most
+ * free_cnt are reclaimed.
+ */
+static int
+virtio_dev_tx_done_cleanup(void *txq, uint32_t free_cnt)
+{
+	struct virtnet_tx *txvq = txq;
+	struct virtqueue *vq;
+	struct virtio_hw *hw;
+	uint16_t num;
+
+	if (txvq == NULL)
+		return -EINVAL;
+
+	vq = virtnet_txq_to_vq(txvq);
+	hw = vq->hw;
+
+	if (unlikely(hw->started == 0))
+		return 0;
+
+	if (virtio_with_packed_queue(hw)) {
+		/* Packed-ring cleanup helpers self-guard via desc_is_used(),
+		 * which carries its own load-acquire; num is only a loop
+		 * ceiling, so use vq_nentries rather than virtqueue_nused()
+		 * (the latter reads the split-ring used->idx and is
+		 * meaningless for packed rings).
+		 */
+		num = free_cnt ? RTE_MIN(free_cnt, vq->vq_nentries)
+			       : vq->vq_nentries;
+		if (hw->use_vec_tx ||
+		    virtio_with_feature(hw, VIRTIO_F_IN_ORDER))
+			virtio_xmit_cleanup_inorder_packed(vq, num);
+		else
+			virtio_xmit_cleanup_normal_packed(vq, num);
+	} else {
+		/* Split-ring cleanup trusts the caller's num; the acquire
+		 * barrier in virtqueue_nused() orders the used->idx load
+		 * before the used->ring[] reads the helper performs.
+		 */
+		num = virtqueue_nused(vq);
+		if (num == 0)
+			return 0;
+		num = free_cnt ? RTE_MIN(free_cnt, num) : num;
+		if (hw->use_inorder_tx)
+			virtio_xmit_cleanup_inorder(vq, num);
+		else
+			virtio_xmit_cleanup(vq, num);
+	}
+
+	return 0;
 }
 
 static void
